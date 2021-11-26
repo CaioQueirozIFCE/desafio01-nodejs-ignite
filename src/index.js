@@ -41,7 +41,6 @@ app.post('/users', checksExistsUserAccount, (request, response) => {
   }
 
   users.push(user);
-
   return response.status(201).json({user: user});
 });
 
@@ -68,15 +67,31 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request; 
+  const { id } = request.params;
+  const { title, deadline } = request.body;
+  const getTodo = user.todos.find(todo => todo.id === id);
+  
+  if(!getTodo){
+    return response.status(401).json({error: "Todo inexistente!"});
+  }
+  getTodo.title = title ?? getTodo.title;
+  getTodo.deadline = deadline ?? getTodo.deadline;
+  getTodo.updated_at = new Date();
+  
+  user.todos[user.todos.indexOf(getTodo)] = getTodo;
+  users[users.indexOf(user)] = user;
+  return response.status(200).json({user: user});
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const requestTeste = request;
+  console.log(requestTeste)
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+    const { id } = request.params;
+
 });
 
 module.exports = app;
