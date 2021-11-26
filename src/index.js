@@ -85,12 +85,34 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  const requestTeste = request;
-  console.log(requestTeste)
+  const { user } = request; 
+  const { id } = request.params;
+  const { done } = request.body;
+  const getTodo = user.todos.find(todo => todo.id === id);
+
+  if(!getTodo){
+    return response.status(401).json({error: "Todo inexistente!"});
+  }
+
+  getTodo.done = done;
+
+  user.todos[user.todos.indexOf(getTodo)] = getTodo;
+  users[users.indexOf(user)] = user;
+  return response.status(200).json({user: user});
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-    const { id } = request.params;
+  const { user } = request; 
+  const { id } = request.params;
+  const getTodo = user.todos.find(todo => todo.id === id);
+  
+  if(!getTodo){
+    return response.status(401).json({error: "Todo inexistente!"});
+  }
+
+  user.todos.splice(user.todos.indexOf(getTodo), 1);
+  users[users.indexOf(user)] = user;
+  return response.status(204).json({});
 
 });
 
