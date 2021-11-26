@@ -13,9 +13,9 @@ describe('Users', () => {
       })
     expect(201);
 
-    expect(validate(response.body.id)).toBe(true);
+    expect(validate(JSON.parse(response.text)?.user.id)).toBe(true);
 
-    expect(response.body).toMatchObject({
+    expect(JSON.parse(response.text)?.user).toMatchObject({
       name: 'John Doe',
       username: 'johndoe',
       todos: []

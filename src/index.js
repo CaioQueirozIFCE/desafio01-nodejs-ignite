@@ -33,6 +33,12 @@ function checksExistsUserAccount(request, response, next) {
 app.post('/users', checksExistsUserAccount, (request, response) => {
   const {name, username} = request.body;
 
+  const newVerificationIfUserAlreadExist = users.find(user => user.username === username);
+
+  if(newVerificationIfUserAlreadExist){
+    return response.status(400).json({error: "Usuário já cadastrado"});
+  }
+
   const user = {
     id: uuidv4(),
     name,
@@ -73,7 +79,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const getTodo = user.todos.find(todo => todo.id === id);
   
   if(!getTodo){
-    return response.status(401).json({error: "Todo inexistente!"});
+    return response.status(404).json({error: "Todo inexistente!"});
   }
   getTodo.title = title ?? getTodo.title;
   getTodo.deadline = deadline ?? getTodo.deadline;
@@ -91,7 +97,7 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const getTodo = user.todos.find(todo => todo.id === id);
 
   if(!getTodo){
-    return response.status(401).json({error: "Todo inexistente!"});
+    return response.status(404).json({error: "Todo inexistente!"});
   }
 
   getTodo.done = done;
@@ -107,7 +113,7 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const getTodo = user.todos.find(todo => todo.id === id);
   
   if(!getTodo){
-    return response.status(401).json({error: "Todo inexistente!"});
+    return response.status(404).json({error: "Todo inexistente!"});
   }
 
   user.todos.splice(user.todos.indexOf(getTodo), 1);
